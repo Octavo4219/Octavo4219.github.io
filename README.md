@@ -1,6 +1,8 @@
-<html lang="en"><head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Dice Roller</title>
   <style>
     :root{
@@ -322,14 +324,14 @@
         </div>
       </div>
 
-      <div class="diceGrid" id="diceGrid"><div class="dieCard"><div class="dieIcon">D2</div><div class="dieLabel">D2</div></div><div class="dieCard active"><div class="dieIcon">D4</div><div class="dieLabel">D4</div></div><div class="dieCard"><div class="dieIcon">D6</div><div class="dieLabel">D6</div></div><div class="dieCard"><div class="dieIcon">D8</div><div class="dieLabel">D8</div></div><div class="dieCard"><div class="dieIcon">D10</div><div class="dieLabel">D10</div></div><div class="dieCard"><div class="dieIcon">D100</div><div class="dieLabel">D100</div></div><div class="dieCard"><div class="dieIcon">D12</div><div class="dieLabel">D12</div></div><div class="dieCard"><div class="dieIcon">D20</div><div class="dieLabel">D20</div></div><div class="dieCard"><div class="dieIcon">★</div><div class="dieLabel">CUSTOM</div></div></div>
+      <div class="diceGrid" id="diceGrid"></div>
 
       <div class="rollBar">
         <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
           <button class="btn red" id="rollBtn">ROLL</button>
           <div class="resultStrip">
-            <span class="chip purple" id="exprChip">1d4 + 0</span>
-            <span class="chip big red" id="totalChip">2</span>
+            <span class="chip purple" id="exprChip">1d20 + 0</span>
+            <span class="chip big red" id="totalChip">—</span>
           </div>
         </div>
         <button class="btn" id="copyBtn" title="Copy last result to clipboard">Copy</button>
@@ -348,18 +350,18 @@
       <div class="rightHeader">
         <div>
           <div class="title">Roll Result</div>
-          <div class="subtitle" id="rightSub">Ready.</div>
+          <div class="subtitle" id="rightSub">Pick a die and roll.</div>
         </div>
-        <div class="chip" id="dieChip">d4</div>
+        <div class="chip" id="dieChip">d20</div>
       </div>
 
       <div class="viewer">
-        <canvas id="gl" data-engine="three.js r160" width="466" height="340"></canvas>
+        <canvas id="gl"></canvas>
       </div>
 
       <div class="history">
         <h4>History</h4>
-        <div id="histList"><div class="histItem"><div class="leftSide"><div class="expr">1d2 + 0</div><div class="rolls">rolls: 2</div></div><div class="tot">2</div></div><div class="histItem"><div class="leftSide"><div class="expr">1d2 + 0</div><div class="rolls">rolls: 2</div></div><div class="tot">2</div></div><div class="histItem"><div class="leftSide"><div class="expr">1d12 + 0</div><div class="rolls">rolls: 6</div></div><div class="tot">6</div></div><div class="histItem"><div class="leftSide"><div class="expr">1d20 + 0</div><div class="rolls">rolls: 6</div></div><div class="tot">6</div></div><div class="histItem"><div class="leftSide"><div class="expr">1d2 + 0</div><div class="rolls">rolls: 1</div></div><div class="tot">1</div></div></div>
+        <div id="histList"></div>
       </div>
     </section>
   </div>
@@ -1277,6 +1279,5 @@
     resize();
     requestAnimationFrame(tick);
   </script>
-
-
-</body></html>
+</body>
+</html>
