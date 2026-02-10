@@ -10,6 +10,7 @@
     :root{
       --bg0:#0b0d10;
       --bg1:#0f1216;
+
       --panel: rgba(20, 22, 26, 0.72);
       --panel2: rgba(26, 28, 33, 0.62);
 
@@ -30,13 +31,16 @@
       --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
 
-      --card-min: 245px;
+      /* Poker-card-ish aspect ratio target */
+      --card-aspect: 1 / 1.42;  /* width / height ~ playing card */
+      --card-min: 250px;
       --gap: 16px;
     }
 
     [data-theme="light"]{
       --bg0:#f7f2e8;
       --bg1:#efe6d7;
+
       --panel: rgba(255, 252, 246, 0.90);
       --panel2: rgba(255, 252, 246, 0.72);
 
@@ -58,7 +62,6 @@
       margin:0;
       color:var(--ink);
       font-family: var(--serif);
-      /* Full-page background, no “repeat seam” */
       background:
         radial-gradient(1200px 800px at 15% 10%, rgba(155,208,255,0.14), transparent 60%),
         radial-gradient(900px 700px at 85% 30%, rgba(255,210,150,0.10), transparent 62%),
@@ -68,7 +71,7 @@
       overflow-x:hidden;
     }
 
-    /* Texture overlays that tile seamlessly */
+    /* Seamless texture overlays */
     .page::before{
       content:"";
       position:fixed;
@@ -116,14 +119,13 @@
     }
 
     /* ========= Header ========= */
-    header.panel{
-      position:relative;
-    }
+    header.panel{ position:relative; }
     header .inner{
       padding: 22px 22px 18px;
       display:grid;
       gap: 10px;
       text-align:center;
+      position:relative;
     }
     header .inner::after{
       content:"";
@@ -138,11 +140,7 @@
     }
     header .inner > *{ position:relative; }
 
-    h1{
-      margin:0;
-      font-size: 32px;
-      letter-spacing: 0.3px;
-    }
+    h1{ margin:0; font-size:32px; letter-spacing:0.3px; }
     .quote{
       margin: 0 auto;
       font-family: var(--sans);
@@ -169,16 +167,21 @@
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
       gap: var(--gap);
+      align-items: stretch;
     }
 
-    /* Card 3D flip */
+    /* Card wrapper */
     .card{
-      perspective: 1100px;
+      perspective: 1200px;
       position:relative;
-      min-height: 190px;
+
+      /* Poker-card aspect */
+      aspect-ratio: var(--card-aspect);
+      min-height: 340px; /* fallback if aspect-ratio unsupported */
     }
 
-    .card .flipHint{
+    /* Hover "flip" hint */
+    .flipHint{
       position:absolute;
       right: 12px;
       bottom: 12px;
@@ -190,14 +193,17 @@
       transition: opacity 160ms ease, transform 160ms ease;
       pointer-events:none;
       user-select:none;
+      z-index: 5;
     }
     .card:hover .flipHint{
       opacity:1;
       transform: translateY(0);
     }
 
+    /* Inner 3D object MUST be absolutely positioned so it has height */
     .cardInner{
-      position:relative;
+      position:absolute;
+      inset:0;
       width:100%;
       height:100%;
       transform-style: preserve-3d;
@@ -215,34 +221,35 @@
       border-radius: var(--radius);
       border: 1px solid var(--border);
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), transparent 40%),
-        rgba(0,0,0,0.16);
+        linear-gradient(180deg, rgba(255,255,255,0.06), transparent 40%),
+        rgba(0,0,0,0.18);
       box-shadow: 0 14px 34px rgba(0,0,0,0.22);
       backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
       overflow:hidden;
       display:grid;
     }
 
-    /* subtle glow accent */
+    /* decorative glow */
     .face::before{
       content:"";
       position:absolute;
       inset:-60px;
       pointer-events:none;
       background:
-        radial-gradient(260px 180px at 18% 22%, rgba(155,208,255,0.15), transparent 62%),
+        radial-gradient(260px 180px at 18% 22%, rgba(155,208,255,0.16), transparent 62%),
         radial-gradient(240px 160px at 82% 78%, rgba(255,210,150,0.10), transparent 64%);
-      opacity:0.8;
+      opacity:0.9;
       transition: opacity 200ms ease;
     }
-    .card:hover .face::before{ opacity: 1; }
 
-    .front{
-      transform: rotateY(0deg);
+    .card:hover .face{
+      border-color: rgba(155,208,255,0.28);
+      box-shadow: var(--glow2), 0 14px 34px rgba(0,0,0,0.22);
     }
-    .back{
-      transform: rotateY(180deg);
-    }
+
+    .front{ transform: rotateY(0deg); }
+    .back{ transform: rotateY(180deg); }
 
     .content{
       position:relative;
@@ -260,8 +267,8 @@
     }
 
     .icon{
-      width: 46px;
-      height: 46px;
+      width: 48px;
+      height: 48px;
       display:grid;
       place-items:center;
       border-radius: 14px;
@@ -306,7 +313,7 @@
     }
 
     .ctaRow{
-      margin-top: 4px;
+      margin-top: auto; /* push buttons toward bottom for poker-card feel */
       display:flex;
       gap: 10px;
       align-items:center;
@@ -333,35 +340,25 @@
       box-shadow: var(--glow);
     }
 
-    /* Click affordance: gentle idle float */
-    .card{
-      transition: transform 200ms ease;
-    }
-    .card:hover{
-      transform: translateY(-3px);
-    }
-
-    /* Back face styling */
-    .back .content{
-      padding: 16px;
-      gap: 10px;
-    }
-    .back .descTitle{
+    /* Back face */
+    .descTitle{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: 10px;
     }
-    .back .small{
+    .small{
       color: var(--muted);
       font-size: 12px;
       font-family: var(--sans);
     }
 
-    /* Accessible focus */
-    .card:focus-within .face{
-      outline: 2px solid rgba(155,208,255,0.40);
-      outline-offset: 2px;
+    /* Optional slight lift on hover */
+    .card{
+      transition: transform 200ms ease;
+    }
+    .card:hover{
+      transform: translateY(-3px);
     }
 
     /* ========= Footer + Dark mode toggle ========= */
@@ -377,7 +374,6 @@
       padding: 0 2px;
     }
 
-    /* Dark mode button fixed bottom-right, scrolls with page */
     .themeToggle{
       position: fixed;
       right: 16px;
@@ -425,7 +421,7 @@
     </header>
 
     <p class="intro">
-      Tap a card to flip it and read what it does. Only the Dice Roller is live for now — everything else is marked
+      Click a card to flip it and read what it does. Only the Dice Roller is live for now — everything else is marked
       <strong>Coming soon</strong>.
     </p>
 
@@ -433,32 +429,35 @@
       <!-- 1) Dice Roller (LIVE) -->
       <div class="card" data-live="true">
         <div class="cardInner">
-          <a class="face front content" href="dice.html">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🎲</div>
-              <div class="status ready">Ready</div>
+          <div class="face front">
+            <div class="content">
+              <div class="topRow">
+                <div class="icon" aria-hidden="true">🎲</div>
+                <div class="status ready">Ready</div>
+              </div>
+              <div>
+                <h3>Dice Roller</h3>
+                <p>Fast rolls for the table: advantage, modifiers, and clean output.</p>
+              </div>
+              <div class="ctaRow">
+                <!-- stopPropagation so clicking Open doesn't flip -->
+                <a class="pill" href="dice.html" data-action="open">Open tool →</a>
+              </div>
             </div>
-            <div>
-              <h3>Dice Roller</h3>
-              <p>Fast rolls for the table: advantage, modifiers, and clean output.</p>
-            </div>
-            <div class="ctaRow">
-              <span class="pill">Open tool →</span>
-            </div>
-          </a>
+          </div>
 
           <div class="face back">
             <div class="content">
               <div class="descTitle">
                 <h3>Dice Roller</h3>
-                <span class="small">Tap to flip back</span>
+                <span class="small">Click to flip back</span>
               </div>
               <p>
                 A quick roller for d20 checks, damage dice, and repeatable rolls without breaking the flow.
                 Designed for “roll now, narrate immediately.”
               </p>
               <div class="ctaRow">
-                <a class="pill" href="dice.html">Open tool →</a>
+                <a class="pill" href="dice.html" data-action="open">Open tool →</a>
               </div>
             </div>
           </div>
@@ -466,26 +465,25 @@
         <span class="flipHint">flip</span>
       </div>
 
-      <!-- Everything below: Coming soon (no external navigation) -->
+      <!-- Everything below: Coming soon -->
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">⚔️</div>
-              <div class="status">Coming soon</div>
+          <div class="face front">
+            <div class="content">
+              <div class="topRow">
+                <div class="icon" aria-hidden="true">⚔️</div>
+                <div class="status">Coming soon</div>
+              </div>
+              <div>
+                <h3>Initiative Tracker</h3>
+                <p>Keep turn order, conditions, and reminders in one place.</p>
+              </div>
+              <div class="ctaRow"><span class="pill">Coming soon</span></div>
             </div>
-            <div>
-              <h3>Initiative Tracker</h3>
-              <p>Keep turn order, conditions, and reminders in one place.</p>
-            </div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
+          </div>
           <div class="face back">
             <div class="content">
-              <div class="descTitle">
-                <h3>Initiative Tracker</h3>
-                <span class="small">Tap to flip back</span>
-              </div>
+              <div class="descTitle"><h3>Initiative Tracker</h3><span class="small">Click to flip back</span></div>
               <p>Track turns, statuses, and timed effects—fast editing, quick reorder, and DM-friendly prompts.</p>
               <div class="ctaRow"><span class="pill">Coming soon</span></div>
             </div>
@@ -496,23 +494,22 @@
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">📜</div>
-              <div class="status">Coming soon</div>
+          <div class="face front">
+            <div class="content">
+              <div class="topRow">
+                <div class="icon" aria-hidden="true">📜</div>
+                <div class="status">Coming soon</div>
+              </div>
+              <div>
+                <h3>Character Sheet</h3>
+                <p>Stats, story notes, inventory, and quick-reference actions.</p>
+              </div>
+              <div class="ctaRow"><span class="pill">Coming soon</span></div>
             </div>
-            <div>
-              <h3>Character Sheet</h3>
-              <p>Stats, story notes, inventory, and quick-reference actions.</p>
-            </div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
+          </div>
           <div class="face back">
             <div class="content">
-              <div class="descTitle">
-                <h3>Character Sheet</h3>
-                <span class="small">Tap to flip back</span>
-              </div>
+              <div class="descTitle"><h3>Character Sheet</h3><span class="small">Click to flip back</span></div>
               <p>A clean sheet with printable views, quick rolls, and sections that stay readable mid-session.</p>
               <div class="ctaRow"><span class="pill">Coming soon</span></div>
             </div>
@@ -523,23 +520,22 @@
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🏘️</div>
-              <div class="status">Coming soon</div>
+          <div class="face front">
+            <div class="content">
+              <div class="topRow">
+                <div class="icon" aria-hidden="true">🏘️</div>
+                <div class="status">Coming soon</div>
+              </div>
+              <div>
+                <h3>Town Generator</h3>
+                <p>Instant settlements: NPCs, shops, factions, and rumors.</p>
+              </div>
+              <div class="ctaRow"><span class="pill">Coming soon</span></div>
             </div>
-            <div>
-              <h3>Town Generator</h3>
-              <p>Instant settlements: NPCs, shops, factions, and rumors.</p>
-            </div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
+          </div>
           <div class="face back">
             <div class="content">
-              <div class="descTitle">
-                <h3>Town Generator</h3>
-                <span class="small">Tap to flip back</span>
-              </div>
+              <div class="descTitle"><h3>Town Generator</h3><span class="small">Click to flip back</span></div>
               <p>Generate a town with mood, notable locations, hooks, and complications that fit your campaign tone.</p>
               <div class="ctaRow"><span class="pill">Coming soon</span></div>
             </div>
@@ -550,23 +546,22 @@
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🧙</div>
-              <div class="status">Coming soon</div>
+          <div class="face front">
+            <div class="content">
+              <div class="topRow">
+                <div class="icon" aria-hidden="true">🧙</div>
+                <div class="status">Coming soon</div>
+              </div>
+              <div>
+                <h3>Character Generator</h3>
+                <p>Build a PC/NPC seed: traits, goals, quirks, and secrets.</p>
+              </div>
+              <div class="ctaRow"><span class="pill">Coming soon</span></div>
             </div>
-            <div>
-              <h3>Character Generator</h3>
-              <p>Build a PC/NPC seed: traits, goals, quirks, and secrets.</p>
-            </div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
+          </div>
           <div class="face back">
             <div class="content">
-              <div class="descTitle">
-                <h3>Character Generator</h3>
-                <span class="small">Tap to flip back</span>
-              </div>
+              <div class="descTitle"><h3>Character Generator</h3><span class="small">Click to flip back</span></div>
               <p>Quick personalities and backstory hooks—enough to roleplay immediately, with room to expand later.</p>
               <div class="ctaRow"><span class="pill">Coming soon</span></div>
             </div>
@@ -577,23 +572,22 @@
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🛒</div>
-              <div class="status">Coming soon</div>
+          <div class="face front">
+            <div class="content">
+              <div class="topRow">
+                <div class="icon" aria-hidden="true">🛒</div>
+                <div class="status">Coming soon</div>
+              </div>
+              <div>
+                <h3>Shop Generator</h3>
+                <p>Merchants, inventories, pricing flavor, and oddities.</p>
+              </div>
+              <div class="ctaRow"><span class="pill">Coming soon</span></div>
             </div>
-            <div>
-              <h3>Shop Generator</h3>
-              <p>Merchants, inventories, pricing flavor, and oddities.</p>
-            </div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
+          </div>
           <div class="face back">
             <div class="content">
-              <div class="descTitle">
-                <h3>Shop Generator</h3>
-                <span class="small">Tap to flip back</span>
-              </div>
+              <div class="descTitle"><h3>Shop Generator</h3><span class="small">Click to flip back</span></div>
               <p>Generate a shop’s vibe, proprietor, stock list, and “special item” the party will absolutely want.</p>
               <div class="ctaRow"><span class="pill">Coming soon</span></div>
             </div>
@@ -602,243 +596,163 @@
         <span class="flipHint">flip</span>
       </div>
 
-      <!-- +10 additional tools (Coming soon) -->
+      <!-- +10 more (coming soon) -->
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">👤</div>
-              <div class="status">Coming soon</div>
-            </div>
-            <div>
-              <h3>NPC Generator</h3>
-              <p>Names, mannerisms, bonds, and immediate roleplay hooks.</p>
-            </div>
+          <div class="face front"><div class="content">
+            <div class="topRow"><div class="icon">👤</div><div class="status">Coming soon</div></div>
+            <div><h3>NPC Generator</h3><p>Names, mannerisms, bonds, and immediate roleplay hooks.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>NPC Generator</h3><span class="small">Tap to flip back</span></div>
-              <p>Instant NPCs with motives and voice cues—perfect for when players talk to “the random guard.”</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
+          </div></div>
+          <div class="face back"><div class="content">
+            <div class="descTitle"><h3>NPC Generator</h3><span class="small">Click to flip back</span></div>
+            <p>Instant NPCs with motives and voice cues—perfect for when players talk to “the random guard.”</p>
+            <div class="ctaRow"><span class="pill">Coming soon</span></div>
+          </div></div>
         </div>
         <span class="flipHint">flip</span>
       </div>
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🏰</div>
-              <div class="status">Coming soon</div>
-            </div>
-            <div>
-              <h3>Encounter Builder</h3>
-              <p>Quick fight setups: difficulty, themes, and twists.</p>
-            </div>
+          <div class="face front"><div class="content">
+            <div class="topRow"><div class="icon">🏰</div><div class="status">Coming soon</div></div>
+            <div><h3>Encounter Builder</h3><p>Quick fight setups: difficulty, themes, and twists.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Encounter Builder</h3><span class="small">Tap to flip back</span></div>
-              <p>Generate encounters by environment and threat level—plus a complication to keep it memorable.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
+          </div></div>
+          <div class="face back"><div class="content">
+            <div class="descTitle"><h3>Encounter Builder</h3><span class="small">Click to flip back</span></div>
+            <p>Generate encounters by environment and threat level—plus a complication to keep it memorable.</p>
+            <div class="ctaRow"><span class="pill">Coming soon</span></div>
+          </div></div>
         </div>
         <span class="flipHint">flip</span>
       </div>
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">💰</div>
-              <div class="status">Coming soon</div>
-            </div>
-            <div>
-              <h3>Loot Generator</h3>
-              <p>Treasure parcels, trinkets, and “this seems cursed” items.</p>
-            </div>
+          <div class="face front"><div class="content">
+            <div class="topRow"><div class="icon">💰</div><div class="status">Coming soon</div></div>
+            <div><h3>Loot Generator</h3><p>Treasure parcels, trinkets, and “this seems cursed” items.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Loot Generator</h3><span class="small">Tap to flip back</span></div>
-              <p>Generate gold, gems, mundane loot, and flavorful magic items with story-forward properties.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
+          </div></div>
+          <div class="face back"><div class="content">
+            <div class="descTitle"><h3>Loot Generator</h3><span class="small">Click to flip back</span></div>
+            <p>Generate gold, gems, mundane loot, and flavorful magic items with story-forward properties.</p>
+            <div class="ctaRow"><span class="pill">Coming soon</span></div>
+          </div></div>
         </div>
         <span class="flipHint">flip</span>
       </div>
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">📖</div>
-              <div class="status">Coming soon</div>
-            </div>
-            <div>
-              <h3>Spellbook Tracker</h3>
-              <p>Prepared spells, slots, notes, and quick casting references.</p>
-            </div>
+          <div class="face front"><div class="content">
+            <div class="topRow"><div class="icon">📖</div><div class="status">Coming soon</div></div>
+            <div><h3>Spellbook Tracker</h3><p>Prepared spells, slots, notes, and quick casting references.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Spellbook Tracker</h3><span class="small">Tap to flip back</span></div>
-              <p>Organize spells by level and situation—track prepared lists and remaining slots cleanly.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
+          </div></div>
+          <div class="face back"><div class="content">
+            <div class="descTitle"><h3>Spellbook Tracker</h3><span class="small">Click to flip back</span></div>
+            <p>Organize spells by level and situation—track prepared lists and remaining slots cleanly.</p>
+            <div class="ctaRow"><span class="pill">Coming soon</span></div>
+          </div></div>
         </div>
         <span class="flipHint">flip</span>
       </div>
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🧭</div>
-              <div class="status">Coming soon</div>
-            </div>
-            <div>
-              <h3>Quest Hook Generator</h3>
-              <p>Hooks, patrons, stakes, and “why now?” urgency.</p>
-            </div>
+          <div class="face front"><div class="content">
+            <div class="topRow"><div class="icon">🧭</div><div class="status">Coming soon</div></div>
+            <div><h3>Quest Hook Generator</h3><p>Hooks, patrons, stakes, and “why now?” urgency.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Quest Hook Generator</h3><span class="small">Tap to flip back</span></div>
-              <p>Generate a quest premise with a twist, a rival, and a consequence if the party ignores it.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
+          </div></div>
+          <div class="face back"><div class="content">
+            <div class="descTitle"><h3>Quest Hook Generator</h3><span class="small">Click to flip back</span></div>
+            <p>Generate a quest premise with a twist, a rival, and a consequence if the party ignores it.</p>
+            <div class="ctaRow"><span class="pill">Coming soon</span></div>
+          </div></div>
         </div>
         <span class="flipHint">flip</span>
       </div>
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🍺</div>
-              <div class="status">Coming soon</div>
-            </div>
-            <div>
-              <h3>Tavern Generator</h3>
-              <p>Menus, patrons, rumors, and the one table you shouldn’t sit at.</p>
-            </div>
+          <div class="face front"><div class="content">
+            <div class="topRow"><div class="icon">🍺</div><div class="status">Coming soon</div></div>
+            <div><h3>Tavern Generator</h3><p>Menus, patrons, rumors, and the one table you shouldn’t sit at.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Tavern Generator</h3><span class="small">Tap to flip back</span></div>
-              <p>Instant taverns with signature drinks, staff, local gossip, and a problem brewing in the back room.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
+          </div></div>
+          <div class="face back"><div class="content">
+            <div class="descTitle"><h3>Tavern Generator</h3><span class="small">Click to flip back</span></div>
+            <p>Instant taverns with signature drinks, staff, local gossip, and a problem brewing in the back room.</p>
+            <div class="ctaRow"><span class="pill">Coming soon</span></div>
+          </div></div>
         </div>
         <span class="flipHint">flip</span>
       </div>
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🗺️</div>
-              <div class="status">Coming soon</div>
-            </div>
-            <div>
-              <h3>Map Generator</h3>
-              <p>Region seeds, points of interest, and travel complications.</p>
-            </div>
+          <div class="face front"><div class="content">
+            <div class="topRow"><div class="icon">🗺️</div><div class="status">Coming soon</div></div>
+            <div><h3>Map Generator</h3><p>Region seeds, points of interest, and travel complications.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Map Generator</h3><span class="small">Tap to flip back</span></div>
-              <p>Generate a quick region layout with landmarks, routes, and a few “here be trouble” zones.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
+          </div></div>
+          <div class="face back"><div class="content">
+            <div class="descTitle"><h3>Map Generator</h3><span class="small">Click to flip back</span></div>
+            <p>Generate a quick region layout with landmarks, routes, and a few “here be trouble” zones.</p>
+            <div class="ctaRow"><span class="pill">Coming soon</span></div>
+          </div></div>
         </div>
         <span class="flipHint">flip</span>
       </div>
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🧾</div>
-              <div class="status">Coming soon</div>
-            </div>
-            <div>
-              <h3>Random Table Roller</h3>
-              <p>Roll on custom tables: weather, rumors, travel, loot, and more.</p>
-            </div>
+          <div class="face front"><div class="content">
+            <div class="topRow"><div class="icon">🧾</div><div class="status">Coming soon</div></div>
+            <div><h3>Random Table Roller</h3><p>Roll on custom tables: weather, rumors, travel, loot, and more.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Random Table Roller</h3><span class="small">Tap to flip back</span></div>
-              <p>Create, save, and roll on tables during play—great for improvising without scrambling.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
+          </div></div>
+          <div class="face back"><div class="content">
+            <div class="descTitle"><h3>Random Table Roller</h3><span class="small">Click to flip back</span></div>
+            <p>Create, save, and roll on tables during play—great for improvising without scrambling.</p>
+            <div class="ctaRow"><span class="pill">Coming soon</span></div>
+          </div></div>
         </div>
         <span class="flipHint">flip</span>
       </div>
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🩸</div>
-              <div class="status">Coming soon</div>
-            </div>
-            <div>
-              <h3>Condition &amp; Status Cards</h3>
-              <p>Quick-reference conditions with reminders and expiry timers.</p>
-            </div>
+          <div class="face front"><div class="content">
+            <div class="topRow"><div class="icon">🩸</div><div class="status">Coming soon</div></div>
+            <div><h3>Condition Cards</h3><p>Quick-reference conditions with reminders and expiry timers.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Condition &amp; Status Cards</h3><span class="small">Tap to flip back</span></div>
-              <p>Tap to apply conditions, track durations, and keep rules summaries visible for the whole table.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
+          </div></div>
+          <div class="face back"><div class="content">
+            <div class="descTitle"><h3>Condition Cards</h3><span class="small">Click to flip back</span></div>
+            <p>Tap to apply conditions, track durations, and keep rules summaries visible for the whole table.</p>
+            <div class="ctaRow"><span class="pill">Coming soon</span></div>
+          </div></div>
         </div>
         <span class="flipHint">flip</span>
       </div>
 
       <div class="card" data-live="false">
         <div class="cardInner">
-          <a class="face front content" href="#">
-            <div class="topRow">
-              <div class="icon" aria-hidden="true">🧿</div>
-              <div class="status">Coming soon</div>
-            </div>
-            <div>
-              <h3>Name Generator</h3>
-              <p>Culture-flavored names for people, places, ships, and swords.</p>
-            </div>
+          <div class="face front"><div class="content">
+            <div class="topRow"><div class="icon">🧿</div><div class="status">Coming soon</div></div>
+            <div><h3>Name Generator</h3><p>Culture-flavored names for people, places, ships, and swords.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </a>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Name Generator</h3><span class="small">Tap to flip back</span></div>
-              <p>Generate consistent naming styles by region or ancestry—plus nicknames and titles.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
+          </div></div>
+          <div class="face back"><div class="content">
+            <div class="descTitle"><h3>Name Generator</h3><span class="small">Click to flip back</span></div>
+            <p>Generate consistent naming styles by region or ancestry—plus nicknames and titles.</p>
+            <div class="ctaRow"><span class="pill">Coming soon</span></div>
+          </div></div>
         </div>
         <span class="flipHint">flip</span>
       </div>
@@ -846,14 +760,14 @@
 
     <footer>
       <span><strong>Unofficial fan tool.</strong> Not affiliated with Wizards of the Coast.</span>
-      <span>Version 0.2</span>
+      <span>Version 0.3</span>
     </footer>
   </div>
 
   <button class="themeToggle" id="themeToggle" type="button" aria-pressed="true">🌗 Dark mode</button>
 
   <script>
-    // Random line under title (no "omen" label; just the text)
+    // Random line under title (no label; just the text)
     const quoteLine = document.getElementById("quoteLine");
     const quotes = [
       "Steel sings loudest when courage keeps the rhythm.",
@@ -867,7 +781,7 @@
     ];
     quoteLine.textContent = quotes[Math.floor(Math.random() * quotes.length)];
 
-    // Theme toggle: fixed bottom-right
+    // Theme toggle fixed bottom-right
     const themeToggle = document.getElementById("themeToggle");
     const saved = localStorage.getItem("dndTheme");
     if (saved === "light" || saved === "dark") document.body.setAttribute("data-theme", saved);
@@ -887,34 +801,21 @@
       syncThemeButton();
     });
 
-    // Flip cards on click / keyboard, but allow Dice Roller to navigate if user clicks "Open tool"
+    // FIX: flip cards reliably.
+    // - We attach click handler directly to each .card
+    // - We prevent flipping only when clicking a link with data-action="open"
     document.querySelectorAll(".card").forEach(card => {
-      const inner = card.querySelector(".cardInner");
-      const isLive = card.getAttribute("data-live") === "true";
+      const openLinks = card.querySelectorAll('a[data-action="open"]');
+      openLinks.forEach(a => a.addEventListener("click", (e) => e.stopPropagation()));
 
-      // Prevent "coming soon" links from jumping
-      card.querySelectorAll('a[href="#"]').forEach(a => {
-        a.addEventListener("click", (e) => e.preventDefault());
-      });
-
-      // Make whole card clickable for flip
-      card.addEventListener("click", (e) => {
-        // If live and user clicked a real navigation link on the FRONT, let it navigate.
-        // Everything else flips.
-        const clickedLink = e.target.closest("a[href]");
-        if (isLive && clickedLink && clickedLink.getAttribute("href") !== "#") {
-          // If card is flipped and user clicks the back "Open tool", allow navigation.
-          // If card is not flipped and user clicked the "Open tool" area, allow navigation.
-          return;
-        }
-        e.preventDefault();
+      card.addEventListener("click", () => {
         card.classList.toggle("is-flipped");
       });
 
-      // Keyboard accessibility: flip on Enter/Space when focused on card
+      // keyboard support
       card.setAttribute("tabindex", "0");
       card.setAttribute("role", "button");
-      card.setAttribute("aria-label", "Flip card to view description");
+      card.setAttribute("aria-label", "Flip card");
       card.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
