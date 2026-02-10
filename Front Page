@@ -5,720 +5,331 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark light" />
   <title>The Lantern & Leylines — D&D Toolkit</title>
+
   <style>
-    /* =========================
-       Theme + Variables
-       ========================= */
     :root {
-      --bg: #0f1114;          /* page background (dark default) */
+      --bg: #0f1114;
       --panel: rgba(20, 22, 26, 0.72);
       --panel-2: rgba(26, 28, 33, 0.62);
-      --ink: #eae6dc;         /* parchment-ish text */
+      --ink: #eae6dc;
       --ink-2: rgba(234, 230, 220, 0.75);
       --muted: rgba(234, 230, 220, 0.55);
       --border: rgba(234, 230, 220, 0.16);
       --shadow: 0 14px 40px rgba(0,0,0,0.45);
 
-      /* Parchment + rune accents */
-      --parchment: #e7dcc4;
-      --parchment-2: #d7c7a4;
+      --glow: 0 0 18px rgba(155, 208, 255, 0.22);
+      --glow-strong: 0 0 28px rgba(155, 208, 255, 0.35);
 
-      /* Arcane glow */
-      --glow: 0 0 18px rgba(155, 208, 255, 0.22), 0 0 52px rgba(155, 208, 255, 0.14);
-      --glow-strong: 0 0 22px rgba(155, 208, 255, 0.30), 0 0 68px rgba(155, 208, 255, 0.20);
-
-      /* Layout */
       --radius: 18px;
       --radius-sm: 12px;
-      --gap: 14px;
-      --sidebar-w: 290px;
+      --gap: 16px;
 
-      /* Typography */
       --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
-    /* Light theme overrides */
     [data-theme="light"] {
       --bg: #f4efe4;
-      --panel: rgba(255, 252, 246, 0.86);
+      --panel: rgba(255, 252, 246, 0.88);
       --panel-2: rgba(255, 252, 246, 0.72);
       --ink: #1b1c1f;
       --ink-2: rgba(27, 28, 31, 0.72);
       --muted: rgba(27, 28, 31, 0.55);
       --border: rgba(27, 28, 31, 0.18);
       --shadow: 0 18px 48px rgba(20, 12, 3, 0.16);
-      --glow: 0 0 16px rgba(86, 140, 190, 0.18), 0 0 44px rgba(86, 140, 190, 0.12);
-      --glow-strong: 0 0 18px rgba(86, 140, 190, 0.26), 0 0 60px rgba(86, 140, 190, 0.16);
     }
 
-    /* =========================
-       Base
-       ========================= */
     * { box-sizing: border-box; }
-    html, body { height: 100%; }
     body {
       margin: 0;
-      color: var(--ink);
-      background: radial-gradient(1200px 700px at 20% 10%, rgba(155,208,255,0.14), transparent 55%),
-                  radial-gradient(900px 600px at 80% 30%, rgba(255, 210, 150, 0.08), transparent 58%),
-                  linear-gradient(180deg, rgba(0,0,0,0.12), transparent 40%),
-                  var(--bg);
       font-family: var(--serif);
-      overflow-x: hidden;
-    }
-
-    /* Parchment texture + rune pattern overlay */
-    .page::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
+      color: var(--ink);
       background:
-        /* parchment grain */
-        radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.06), transparent 60%),
-        radial-gradient(1px 1px at 62% 58%, rgba(255,255,255,0.05), transparent 60%),
-        radial-gradient(1px 1px at 30% 80%, rgba(0,0,0,0.05), transparent 55%),
-        /* faint paper mottling */
-        radial-gradient(700px 480px at 40% 30%, rgba(231,220,196,0.06), transparent 60%),
-        radial-gradient(500px 420px at 70% 70%, rgba(215,199,164,0.05), transparent 60%);
-      mix-blend-mode: overlay;
-      opacity: 0.9;
-    }
-    .page::after {
-      content: "";
-      position: fixed;
-      inset: -20px;
-      pointer-events: none;
-      /* Subtle rune-ish pattern using repeating conic gradients */
-      background:
-        repeating-conic-gradient(from 0deg at 20% 30%,
-          rgba(155,208,255,0.05) 0 8deg,
-          transparent 8deg 18deg),
-        repeating-conic-gradient(from 0deg at 70% 60%,
-          rgba(155,208,255,0.04) 0 10deg,
-          transparent 10deg 22deg);
-      filter: blur(0.2px);
-      opacity: 0.35;
-      mix-blend-mode: screen;
+        radial-gradient(1000px 600px at 20% 10%, rgba(155,208,255,0.14), transparent 55%),
+        radial-gradient(900px 600px at 80% 30%, rgba(255,210,150,0.08), transparent 58%),
+        var(--bg);
     }
 
-    a { color: inherit; text-decoration: none; }
-
-    /* =========================
-       Layout: Sidebar + Grid
-       ========================= */
-    .page {
-      min-height: 100%;
-      display: flex;
-      justify-content: center;
-    }
-
-    .shell {
-      width: min(1200px, 100%);
-      padding: 22px 18px 32px;
-      display: grid;
-      grid-template-columns: var(--sidebar-w) 1fr;
-      gap: 18px;
-      align-items: start;
-    }
-
-    @media (max-width: 920px) {
-      .shell {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* =========================
-       Panels
-       ========================= */
     .panel {
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 30%),
-                  var(--panel);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 30%), var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
     }
 
-    /* parchment edge effect inside panels */
-    .panel-inner {
-      border-radius: calc(var(--radius) - 2px);
-      padding: 16px;
+    /* ================= HEADER ================= */
+    header {
+      margin: 18px auto 0;
+      width: min(1200px, 94%);
+    }
+
+    .header-inner {
+      padding: 20px 22px;
+      display: grid;
+      gap: 14px;
       position: relative;
       overflow: hidden;
     }
-    .panel-inner::before {
+
+    .header-inner::after {
       content: "";
       position: absolute;
-      inset: 0;
+      inset: -40px;
       background:
-        radial-gradient(900px 400px at 20% 10%, rgba(231,220,196,0.06), transparent 60%),
-        radial-gradient(700px 360px at 80% 60%, rgba(215,199,164,0.05), transparent 62%);
-      opacity: 0.9;
+        radial-gradient(400px 200px at 20% 30%, rgba(155,208,255,0.18), transparent 60%),
+        radial-gradient(400px 200px at 80% 70%, rgba(255,210,150,0.12), transparent 60%);
+      animation: pulse 5s ease-in-out infinite;
       pointer-events: none;
     }
-    .panel-inner > * { position: relative; }
 
-    /* =========================
-       Sidebar
-       ========================= */
     .brand {
-      padding: 18px 16px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .title {
       display: grid;
       gap: 6px;
     }
-    .title h1 {
+
+    .brand h1 {
       margin: 0;
-      font-size: 26px;
-      letter-spacing: 0.2px;
+      font-size: 30px;
+      letter-spacing: 0.3px;
     }
-    .title .tagline {
+
+    .tagline {
       margin: 0;
-      color: var(--ink-2);
       font-family: var(--sans);
-      font-size: 13px;
-      line-height: 1.35;
+      font-size: 14px;
+      color: var(--ink-2);
+      max-width: 80ch;
+    }
+
+    .header-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .quote {
-      margin-top: 10px;
-      padding: 12px 12px;
-      border-radius: var(--radius-sm);
-      border: 1px dashed rgba(231,220,196,0.22);
-      background: var(--panel-2);
-      position: relative;
-      overflow: hidden;
-    }
-    .quote::after {
-      content: "";
-      position: absolute;
-      inset: -30px;
-      background: radial-gradient(200px 140px at 20% 30%, rgba(155,208,255,0.14), transparent 60%);
-      opacity: 0.6;
-      pointer-events: none;
-      animation: runePulse 4.8s ease-in-out infinite;
-    }
-    .quote p {
-      margin: 0;
-      font-size: 13px;
       font-family: var(--sans);
+      font-size: 13px;
       color: var(--ink-2);
-    }
-    .quote strong {
-      color: var(--ink);
-      font-weight: 650;
+      border: 1px dashed rgba(234,230,220,0.25);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--panel-2);
+      max-width: 70ch;
     }
 
     .controls {
       display: flex;
       gap: 10px;
-      align-items: center;
-      margin-top: 10px;
       flex-wrap: wrap;
     }
 
     .btn {
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 45%),
-                  rgba(0,0,0,0.10);
-      color: var(--ink);
       border-radius: 999px;
-      padding: 9px 12px;
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+      color: var(--ink);
       font-family: var(--sans);
       font-size: 13px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
     }
+
     .btn:hover {
-      transform: translateY(-1px);
-      border-color: rgba(155,208,255,0.35);
       box-shadow: var(--glow);
-    }
-    .btn:active { transform: translateY(0px); }
-
-    .small {
-      font-size: 12px;
-      color: var(--muted);
-      font-family: var(--sans);
-      margin: 0;
+      border-color: rgba(155,208,255,0.4);
     }
 
-    .nav {
-      margin-top: 12px;
-      display: grid;
-      gap: 8px;
+    /* ================= MAIN ================= */
+    main {
+      width: min(1200px, 94%);
+      margin: 22px auto 30px;
     }
 
-    .nav a {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,0.10);
-      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-      font-family: var(--sans);
-      font-size: 13px;
-    }
-    .nav a:hover {
-      transform: translateY(-1px);
-      border-color: rgba(155,208,255,0.35);
-      box-shadow: var(--glow);
-    }
-    .nav .hint {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    /* =========================
-       Main content
-       ========================= */
-    .main {
-      padding: 0;
-    }
-
-    .hero {
-      padding: 18px 18px 14px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .hero h2 {
-      margin: 0;
-      font-size: 20px;
-      letter-spacing: 0.15px;
-    }
-    .hero p {
-      margin: 0;
+    .intro {
+      margin-bottom: 18px;
       font-family: var(--sans);
       color: var(--ink-2);
-      line-height: 1.5;
       font-size: 14px;
-      max-width: 70ch;
+      max-width: 80ch;
     }
 
-    /* Card Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(12, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: var(--gap);
-      padding: 0 18px 18px;
-    }
-
-    @media (max-width: 1060px) {
-      .grid { grid-template-columns: repeat(8, 1fr); }
-    }
-    @media (max-width: 680px) {
-      .grid { grid-template-columns: repeat(4, 1fr); }
     }
 
     .card {
-      grid-column: span 4;
+      padding: 18px;
       border-radius: var(--radius);
       border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 40%),
-                  rgba(0,0,0,0.10);
+      background: rgba(0,0,0,0.18);
+      transition: transform 180ms ease, box-shadow 180ms ease;
       position: relative;
       overflow: hidden;
-      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
-      min-height: 148px;
-    }
-
-    @media (max-width: 1060px) {
-      .card { grid-column: span 4; }
-    }
-    @media (max-width: 680px) {
-      .card { grid-column: span 4; }
     }
 
     .card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(155,208,255,0.40);
+      transform: translateY(-4px);
       box-shadow: var(--glow-strong);
     }
 
-    /* magical rune pulse accent in cards */
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: -50px;
-      background:
-        radial-gradient(220px 160px at 15% 20%, rgba(155,208,255,0.15), transparent 60%),
-        radial-gradient(200px 140px at 85% 80%, rgba(255,210,150,0.10), transparent 62%);
-      opacity: 0.70;
-      pointer-events: none;
-      animation: runePulse 5.4s ease-in-out infinite;
-    }
-
-    .card-inner {
-      position: relative;
-      padding: 16px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    /* Big icon button style */
     .icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      border: 1px solid rgba(155,208,255,0.28);
-      background: linear-gradient(180deg, rgba(155,208,255,0.12), transparent 60%),
-                  rgba(0,0,0,0.20);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.20);
-      display: grid;
-      place-items: center;
-      font-size: 20px;
-      flex: 0 0 auto;
+      font-size: 28px;
+      margin-bottom: 6px;
     }
 
     .card h3 {
-      margin: 0;
-      font-size: 16px;
+      margin: 6px 0 4px;
       font-family: var(--sans);
-      letter-spacing: 0.2px;
+      font-size: 16px;
     }
-    .card .sub {
+
+    .card p {
       margin: 0;
       font-family: var(--sans);
       font-size: 13px;
       color: var(--ink-2);
-      line-height: 1.45;
     }
 
-    .go {
-      margin-top: 6px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,0.14);
+    .open {
+      margin-top: 10px;
+      display: inline-block;
       font-family: var(--sans);
       font-size: 13px;
-      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-    }
-    .card:hover .go {
-      border-color: rgba(155,208,255,0.38);
-      box-shadow: var(--glow);
-      transform: translateY(-1px);
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
     }
 
-    /* =========================
-       Footer
-       ========================= */
+    .open:hover {
+      box-shadow: var(--glow);
+    }
+
     footer {
-      padding: 10px 18px 18px;
-      color: var(--muted);
+      margin-top: 22px;
       font-family: var(--sans);
       font-size: 12px;
+      color: var(--muted);
       display: flex;
       justify-content: space-between;
-      gap: 12px;
       flex-wrap: wrap;
-    }
-    footer .credit {
-      max-width: 80ch;
-    }
-    footer a {
-      text-decoration: underline;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 2px;
+      gap: 10px;
     }
 
-    /* =========================
-       Animations (hover glow + rune pulse + parchment reveal)
-       ========================= */
-    @keyframes runePulse {
-      0%, 100% { transform: translate3d(0,0,0) scale(1); opacity: 0.55; }
-      50% { transform: translate3d(0,-2px,0) scale(1.02); opacity: 0.85; }
-    }
-
-    .reveal {
-      animation: parchmentReveal 520ms ease-out both;
-      transform-origin: top center;
-    }
-    @keyframes parchmentReveal {
-      from { opacity: 0; transform: translateY(10px) scale(0.985); filter: blur(1px); }
-      to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-    }
-
-    /* Accessibility */
-    @media (prefers-reduced-motion: reduce) {
-      .reveal, .card::before, .quote::after { animation: none !important; }
-      .btn, .card, .nav a, .go { transition: none !important; }
+    @keyframes pulse {
+      0%,100% { opacity: 0.6; }
+      50% { opacity: 1; }
     }
   </style>
 </head>
 
 <body data-theme="dark">
-  <div class="page">
-    <div class="shell">
-      <!-- Sidebar -->
-      <aside class="panel reveal">
-        <div class="panel-inner brand">
-          <div class="title">
-            <h1>The Lantern & Leylines</h1>
-            <p class="tagline">
-              A parchment-smooth toolkit for heroes, heralds, and hexes —
-              roll true, plan fast, and let the story breathe.
-            </p>
-          </div>
 
-          <div class="quote" id="quoteBox" aria-live="polite">
-            <p><strong>Arcane Notice:</strong> “Speak the tool’s name, and the table obeys.”</p>
-          </div>
+<header class="panel">
+  <div class="header-inner">
+    <div class="brand">
+      <h1>The Lantern & Leylines</h1>
+      <p class="tagline">
+        A parchment-smooth toolkit for heroes, heralds, and hexes — roll true, plan fast, and let the story breathe.
+      </p>
+    </div>
 
-          <div class="controls">
-            <button class="btn" id="themeToggle" type="button" aria-pressed="true" title="Toggle light/dark">
-              🌗 <span>Dark Mode</span>
-            </button>
-            <button class="btn" id="newQuote" type="button" title="New flavor quote">
-              ✨ <span>New Omen</span>
-            </button>
-          </div>
+    <div class="header-row">
+      <div class="quote" id="quote">
+        <strong>Arcane Notice:</strong> “Speak the tool’s name, and the table obeys.”
+      </div>
 
-          <p class="small">Quick steps for the road: jump to a tool below.</p>
-
-          <nav class="nav" aria-label="Quick links">
-            <a href="#tools"><span>🧰 Tools</span> <span class="hint">Scroll</span></a>
-            <a href="#dice"><span>🎲 Dice Roller</span> <span class="hint">Open</span></a>
-            <a href="#initiative"><span>⚔️ Initiative</span> <span class="hint">Open</span></a>
-            <a href="#sheet"><span>📜 Character Sheet</span> <span class="hint">Open</span></a>
-            <a href="#generators"><span>🗺️ Generators</span> <span class="hint">Scroll</span></a>
-          </nav>
-        </div>
-      </aside>
-
-      <!-- Main -->
-      <main class="panel reveal main">
-        <div class="panel-inner">
-          <header class="hero">
-            <h2>Front Page</h2>
-            <p>
-              Welcome, adventurer. Choose your instrument: the bones for fate, the ledger for battle order,
-              the scroll for heroes, or the generators that conjure a town from candle-smoke and rumor.
-            </p>
-          </header>
-
-          <!-- Tools Grid -->
-          <section class="grid" id="tools" aria-label="Tools and generators">
-            <!-- Dice Roller -->
-            <a class="card" id="dice" href="dice.html" data-slot="dice">
-              <div class="card-inner">
-                <div class="card-top">
-                  <div class="icon" aria-hidden="true">🎲</div>
-                  <div class="small">Table Tool</div>
-                </div>
-                <div>
-                  <h3>Dice Roller — quick rolls</h3>
-                  <p class="sub">Roll the bones in candlelight; let fate do the talking.</p>
-                </div>
-                <span class="go">Open tool <span aria-hidden="true">→</span></span>
-              </div>
-            </a>
-
-            <!-- Initiative -->
-            <a class="card" id="initiative" href="initiative.html" data-slot="initiative">
-              <div class="card-inner">
-                <div class="card-top">
-                  <div class="icon" aria-hidden="true">⚔️</div>
-                  <div class="small">Table Tool</div>
-                </div>
-                <div>
-                  <h3>Initiative — battle order</h3>
-                  <p class="sub">Call the names. Mark the turns. Keep the chaos entertaining.</p>
-                </div>
-                <span class="go">Open tool <span aria-hidden="true">→</span></span>
-              </div>
-            </a>
-
-            <!-- Character Sheet -->
-            <a class="card" id="sheet" href="character-sheet.html" data-slot="sheet">
-              <div class="card-inner">
-                <div class="card-top">
-                  <div class="icon" aria-hidden="true">📜</div>
-                  <div class="small">Player</div>
-                </div>
-                <div>
-                  <h3>Character Sheet — stats & story</h3>
-                  <p class="sub">Ink your legend: numbers, notes, and the scars you earned.</p>
-                </div>
-                <span class="go">Open tool <span aria-hidden="true">→</span></span>
-              </div>
-            </a>
-
-            <!-- Town Generator -->
-            <a class="card" id="town" href="town-generator.html" data-slot="town">
-              <div class="card-inner">
-                <div class="card-top">
-                  <div class="icon" aria-hidden="true">🏘️</div>
-                  <div class="small">Generator</div>
-                </div>
-                <div>
-                  <h3>Town Generator — places & plots</h3>
-                  <p class="sub">From taverns to trouble: conjure a settlement in a heartbeat.</p>
-                </div>
-                <span class="go">Open tool <span aria-hidden="true">→</span></span>
-              </div>
-            </a>
-
-            <!-- Character Generator -->
-            <a class="card" id="chargen" href="character-generator.html" data-slot="chargen">
-              <div class="card-inner">
-                <div class="card-top">
-                  <div class="icon" aria-hidden="true">🧙</div>
-                  <div class="small">Generator</div>
-                </div>
-                <div>
-                  <h3>Character Generator — heroes on demand</h3>
-                  <p class="sub">Need a stranger with secrets? Here’s one. Probably harmless.</p>
-                </div>
-                <span class="go">Open tool <span aria-hidden="true">→</span></span>
-              </div>
-            </a>
-
-            <!-- Shop Generator -->
-            <a class="card" id="shop" href="shop-generator.html" data-slot="shop">
-              <div class="card-inner">
-                <div class="card-top">
-                  <div class="icon" aria-hidden="true">🛒</div>
-                  <div class="small">Generator</div>
-                </div>
-                <div>
-                  <h3>Shop Generator — wares & wonders</h3>
-                  <p class="sub">The merchant smiles. The prices bite. The loot is real.</p>
-                </div>
-                <span class="go">Open tool <span aria-hidden="true">→</span></span>
-              </div>
-            </a>
-          </section>
-
-          <!-- Generator anchor target (for sidebar link) -->
-          <div id="generators" style="height: 1px;"></div>
-
-          <footer>
-            <div class="credit">
-              <strong>Unofficial fan tool.</strong> Not affiliated with Wizards of the Coast.
-              Built for fast tables and long stories.
-              <span style="opacity:.9">Version:</span> <span id="version">0.1</span>
-            </div>
-            <div>
-              <span id="themeStatus">Theme: Dark</span>
-              <span aria-hidden="true"> • </span>
-              <a href="#" id="editLinksHelp" title="How to change links">Edit links</a>
-            </div>
-          </footer>
-        </div>
-      </main>
+      <div class="controls">
+        <button class="btn" id="themeToggle">🌗 Dark Mode</button>
+        <button class="btn" id="newQuote">✨ New Omen</button>
+      </div>
     </div>
   </div>
+</header>
 
-  <script>
-    // =========================
-    // Theme: default dark; toggle to light
-    // =========================
-    const root = document.body;
-    const themeToggle = document.getElementById("themeToggle");
-    const themeStatus = document.getElementById("themeStatus");
+<main>
+  <p class="intro">
+    Choose your instrument: the bones for fate, the ledger for battle order,
+    the scroll for heroes, or the generators that conjure a town from rumor and smoke.
+  </p>
 
-    // Persist theme
-    const savedTheme = localStorage.getItem("dndTheme");
-    if (savedTheme === "light" || savedTheme === "dark") {
-      root.setAttribute("data-theme", savedTheme);
-    } else {
-      root.setAttribute("data-theme", "dark");
-    }
+  <section class="grid">
+    <a class="card" href="dice.html">
+      <div class="icon">🎲</div>
+      <h3>Dice Roller — quick rolls</h3>
+      <p>Roll the bones and let fate speak.</p>
+      <span class="open">Open →</span>
+    </a>
 
-    function syncThemeUI() {
-      const t = root.getAttribute("data-theme");
-      const isDark = t === "dark";
-      themeToggle.setAttribute("aria-pressed", String(isDark));
-      themeToggle.querySelector("span").textContent = isDark ? "Dark Mode" : "Light Mode";
-      themeStatus.textContent = "Theme: " + (isDark ? "Dark" : "Light");
-    }
-    syncThemeUI();
+    <a class="card" href="initiative.html">
+      <div class="icon">⚔️</div>
+      <h3>Initiative — battle order</h3>
+      <p>Track turns without losing momentum.</p>
+      <span class="open">Open →</span>
+    </a>
 
-    themeToggle.addEventListener("click", () => {
-      const current = root.getAttribute("data-theme");
-      const next = current === "dark" ? "light" : "dark";
-      root.setAttribute("data-theme", next);
-      localStorage.setItem("dndTheme", next);
-      syncThemeUI();
-    });
+    <a class="card" href="character-sheet.html">
+      <div class="icon">📜</div>
+      <h3>Character Sheet — stats & story</h3>
+      <p>Your legend, neatly inked.</p>
+      <span class="open">Open →</span>
+    </a>
 
-    // =========================
-    // Rotating flavor quotes (epic + tavern-witty + arcane)
-    // =========================
-    const quoteBox = document.getElementById("quoteBox");
-    const newQuote = document.getElementById("newQuote");
-    const quotes = [
-      { head: "Epic Decree", body: "“Steel sings loudest when courage keeps the rhythm.”" },
-      { head: "Tavern Wisdom", body: "“Never trust a smiling bard… unless the snacks are good.”" },
-      { head: "Arcane Notice", body: "“A rune ignored is a lesson repeated.”" },
-      { head: "Epic Decree", body: "“Heroes are made between the roll and the resolve.”" },
-      { head: "Tavern Wisdom", body: "“If the plan fails, blame the goblin. Works every time.”" },
-      { head: "Arcane Notice", body: "“Speak softly. Cast precisely. Take notes.”" }
-    ];
+    <a class="card" href="town-generator.html">
+      <div class="icon">🏘️</div>
+      <h3>Town Generator — places & plots</h3>
+      <p>From taverns to trouble.</p>
+      <span class="open">Open →</span>
+    </a>
 
-    function setQuote(q) {
-      quoteBox.innerHTML = `<p><strong>${q.head}:</strong> ${q.body}</p>`;
-    }
+    <a class="card" href="character-generator.html">
+      <div class="icon">🧙</div>
+      <h3>Character Generator — heroes on demand</h3>
+      <p>Strangers with secrets.</p>
+      <span class="open">Open →</span>
+    </a>
 
-    function randomQuote() {
-      const q = quotes[Math.floor(Math.random() * quotes.length)];
-      setQuote(q);
-    }
+    <a class="card" href="shop-generator.html">
+      <div class="icon">🛒</div>
+      <h3>Shop Generator — wares & wonders</h3>
+      <p>The prices bite. The loot is real.</p>
+      <span class="open">Open →</span>
+    </a>
+  </section>
 
-    newQuote.addEventListener("click", randomQuote);
+  <footer>
+    <span><strong>Unofficial fan tool.</strong> Not affiliated with Wizards of the Coast.</span>
+    <span>Version 0.1</span>
+  </footer>
+</main>
 
-    // Auto pick one on load (but keep deterministic-ish feel)
-    randomQuote();
+<script>
+  const quotes = [
+    "“Steel sings loudest when courage keeps the rhythm.”",
+    "“Never trust a smiling bard… unless the snacks are good.”",
+    "“A rune ignored is a lesson repeated.”",
+    "“Heroes are made between the roll and the resolve.”",
+    "“Speak softly. Cast precisely. Take notes.”"
+  ];
 
-    // =========================
-    // “Edit links” helper
-    // =========================
-    document.getElementById("editLinksHelp").addEventListener("click", (e) => {
-      e.preventDefault();
-      alert(
-        "To change where each card goes, edit the href values in the HTML:\n\n" +
-        "Dice Roller → href=\"dice.html\"\n" +
-        "Initiative → href=\"initiative.html\"\n" +
-        "Character Sheet → href=\"character-sheet.html\"\n" +
-        "Town Generator → href=\"town-generator.html\"\n" +
-        "Character Generator → href=\"character-generator.html\"\n" +
-        "Shop Generator → href=\"shop-generator.html\"\n\n" +
-        "You can also point them to full URLs (https://...)."
-      );
-    });
+  const quoteBox = document.getElementById("quote");
+  document.getElementById("newQuote").onclick = () => {
+    quoteBox.innerHTML = "<strong>Omen:</strong> " + quotes[Math.floor(Math.random() * quotes.length)];
+  };
 
-    // =========================
-    // Slots/placeholders (your “future-proofing”)
-    // - If you later want to inject widgets or badges, target elements by [data-slot="..."]
-    // =========================
-    // Example (later): document.querySelector('[data-slot="dice"]')...
-  </script>
+  const toggle = document.getElementById("themeToggle");
+  toggle.onclick = () => {
+    const body = document.body;
+    const dark = body.getAttribute("data-theme") === "dark";
+    body.setAttribute("data-theme", dark ? "light" : "dark");
+    toggle.textContent = dark ? "🌗 Light Mode" : "🌗 Dark Mode";
+  };
+</script>
+
 </body>
 </html>
