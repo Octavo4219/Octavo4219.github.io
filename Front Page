@@ -42,10 +42,6 @@
       --card-aspect: 1 / 1.42;
       --card-min: 250px;
       --gap: 16px;
-
-      /* Feature icon sizing */
-      --feature-icon: 72px;
-      --feature-icon-sm: 64px;
     }
 
     [data-theme="light"]{
@@ -283,47 +279,76 @@
       display:grid;
       gap: 10px;
       align-content:start;
+      height:100%;
     }
 
-    /* FEATURE ICON AREA */
-    .featureRow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      margin-bottom: 2px;
-    }
-
-    .featureIcon{
-      width: var(--feature-icon);
-      height: var(--feature-icon);
+    /* ========= NEW ICON STYLE =========
+       - Centered
+       - 60% of card width
+       - maintains image aspect ratio
+    */
+    .iconWrap{
+      width: 60%;
+      margin: 8px auto 6px;
+      aspect-ratio: 1 / 1;
       border-radius: 18px;
-      border: 1px solid rgba(150,230,255,0.34);
+      border: 1px solid rgba(150,230,255,0.30);
       background:
-        radial-gradient(180px 140px at 30% 30%, rgba(150,230,255,0.16), transparent 65%),
-        radial-gradient(180px 140px at 70% 70%, rgba(190,140,255,0.12), transparent 65%),
-        rgba(0,0,0,0.18);
-      box-shadow: 0 14px 30px rgba(0,0,0,0.22), var(--glow);
+        radial-gradient(220px 180px at 35% 30%, rgba(150,230,255,0.18), transparent 65%),
+        radial-gradient(220px 180px at 70% 70%, rgba(190,140,255,0.12), transparent 65%),
+        rgba(0,0,0,0.16);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.24), var(--glow);
       display:grid;
       place-items:center;
       overflow:hidden;
-      flex: 0 0 auto;
+      position:relative;
     }
 
-    .featureIcon img{
-      width: 92%;
-      height: 92%;
+    /* subtle rune ring */
+    .iconWrap::after{
+      content:"";
+      position:absolute;
+      inset:-30px;
+      background:
+        conic-gradient(from 0deg,
+          rgba(150,230,255,0.12),
+          rgba(190,140,255,0.10),
+          rgba(255,195,120,0.06),
+          rgba(150,230,255,0.12));
+      opacity:0.35;
+      filter: blur(8px);
+      animation: halo 8s linear infinite;
+      pointer-events:none;
+    }
+
+    .iconImg{
+      width: 88%;
+      height: 88%;
       object-fit: contain;
-      filter: drop-shadow(0 0 14px rgba(150,230,255,0.22));
-      transform: translateZ(0);
+      filter: drop-shadow(0 0 18px rgba(150,230,255,0.18));
+      position:relative;
+      z-index:1;
     }
 
-    .featureIcon.emoji{
-      font-size: 30px;
+    .iconEmoji{
+      font-size: 56px;
+      line-height: 1;
+      text-shadow: 0 0 18px rgba(150,230,255,0.22);
+      position:relative;
+      z-index:1;
     }
 
-    @media (max-width: 420px){
-      .featureIcon{ width: var(--feature-icon-sm); height: var(--feature-icon-sm); border-radius: 16px; }
+    @keyframes halo{
+      0%{ transform: rotate(0deg); }
+      100%{ transform: rotate(360deg); }
+    }
+
+    .topMeta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-top: 2px;
     }
 
     .status{
@@ -348,6 +373,7 @@
       font-family: var(--sans);
       font-size: 16px;
       letter-spacing: 0.2px;
+      text-align:center;
     }
 
     p{
@@ -356,6 +382,7 @@
       font-size: 13px;
       color: var(--ink2);
       line-height: 1.45;
+      text-align:center;
     }
 
     .ctaRow{
@@ -363,6 +390,7 @@
       display:flex;
       gap: 10px;
       align-items:center;
+      justify-content:center;
       flex-wrap:wrap;
     }
 
@@ -445,7 +473,7 @@
     }
 
     @media (prefers-reduced-motion: reduce){
-      header .inner::after, .veil::after, .face::before{ animation:none !important; }
+      header .inner::after, .veil::after, .face::before, .iconWrap::after{ animation:none !important; }
       .cardInner{ transition:none !important; }
       .card, .pill, .themeToggle{ transition:none !important; }
     }
@@ -474,11 +502,12 @@
         <div class="cardInner">
           <div class="face front">
             <div class="content">
-              <div class="featureRow">
-                <!-- FEATURE ICON: user-provided image -->
-                <div class="featureIcon" aria-hidden="true">
-                  <img src="https://i.imgur.com/qMPejCL.png" alt="" />
-                </div>
+              <div class="iconWrap" aria-hidden="true">
+                <img class="iconImg" src="https://i.imgur.com/qMPejCL.png" alt="" />
+              </div>
+
+              <div class="topMeta">
+                <span></span>
                 <div class="status ready">Ready</div>
               </div>
 
@@ -512,14 +541,12 @@
         <span class="flipHint">flip</span>
       </div>
 
-      <!-- Everything below: Coming soon (placeholders icons for now) -->
+      <!-- Everything below: Coming soon -->
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">⚔️</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">⚔️</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Initiative Tracker</h3><p>Keep turn order, conditions, and reminders in one place.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -535,10 +562,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">📜</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">📜</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Character Sheet</h3><p>Stats, story notes, inventory, and quick-reference actions.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -554,10 +579,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">🏘️</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">🏘️</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Town Generator</h3><p>Instant settlements: NPCs, shops, factions, and rumors.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -573,10 +596,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">🧙</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">🧙</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Character Generator</h3><p>Build a PC/NPC seed: traits, goals, quirks, and secrets.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -592,10 +613,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">🛒</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">🛒</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Shop Generator</h3><p>Merchants, inventories, pricing flavor, and oddities.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -611,10 +630,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">👤</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">👤</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>NPC Generator</h3><p>Names, mannerisms, bonds, and immediate roleplay hooks.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -630,10 +647,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">🏰</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">🏰</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Encounter Builder</h3><p>Quick fight setups: difficulty, themes, and twists.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -649,10 +664,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">💰</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">💰</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Loot Generator</h3><p>Treasure parcels, trinkets, and “this seems cursed” items.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -668,10 +681,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">📖</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">📖</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Spellbook Tracker</h3><p>Prepared spells, slots, notes, and quick casting references.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -687,10 +698,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">🧭</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">🧭</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Quest Hook Generator</h3><p>Hooks, patrons, stakes, and “why now?” urgency.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -706,10 +715,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">🍺</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">🍺</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Tavern Generator</h3><p>Menus, patrons, rumors, and the one table you shouldn’t sit at.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -725,10 +732,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">🗺️</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">🗺️</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Map Generator</h3><p>Region seeds, points of interest, and travel complications.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -744,10 +749,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">🧾</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">🧾</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Random Table Roller</h3><p>Roll on custom tables: weather, rumors, travel, loot, and more.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -763,10 +766,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">🩸</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">🩸</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Condition Cards</h3><p>Quick-reference conditions with reminders and expiry timers.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -782,10 +783,8 @@
       <div class="card" data-live="false">
         <div class="cardInner">
           <div class="face front"><div class="content">
-            <div class="featureRow">
-              <div class="featureIcon emoji" aria-hidden="true">🧿</div>
-              <div class="status">Coming soon</div>
-            </div>
+            <div class="iconWrap" aria-hidden="true"><div class="iconEmoji">🧿</div></div>
+            <div class="topMeta"><span></span><div class="status">Coming soon</div></div>
             <div><h3>Name Generator</h3><p>Culture-flavored names for people, places, ships, and swords.</p></div>
             <div class="ctaRow"><span class="pill">Coming soon</span></div>
           </div></div>
@@ -802,7 +801,7 @@
 
     <footer>
       <span><strong>Unofficial fan tool.</strong> Not affiliated with Wizards of the Coast.</span>
-      <span>Version 0.5</span>
+      <span>Version 0.6</span>
     </footer>
   </div>
 
