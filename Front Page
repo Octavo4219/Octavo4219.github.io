@@ -8,22 +8,28 @@
 
   <style>
     :root{
-      --bg0:#0b0d10;
-      --bg1:#0f1216;
+      --bg0:#07080b;
+      --bg1:#0a0d12;
 
-      --panel: rgba(20, 22, 26, 0.72);
-      --panel2: rgba(26, 28, 33, 0.62);
+      --panel: rgba(12, 14, 18, 0.68);
+      --panel2: rgba(18, 20, 26, 0.58);
 
-      --ink:#eae6dc;
-      --ink2: rgba(234,230,220,0.78);
-      --muted: rgba(234,230,220,0.58);
+      --ink:#efe9dd;
+      --ink2: rgba(239,233,221,0.78);
+      --muted: rgba(239,233,221,0.58);
 
-      --border: rgba(234,230,220,0.18);
-      --border2: rgba(155,208,255,0.32);
+      --border: rgba(239,233,221,0.16);
+      --border2: rgba(150, 230, 255, 0.38);
 
-      --shadow: 0 18px 46px rgba(0,0,0,0.45);
-      --glow: 0 0 18px rgba(155,208,255,0.20);
-      --glow2: 0 0 34px rgba(155,208,255,0.30);
+      --shadow: 0 18px 46px rgba(0,0,0,0.55);
+
+      --aura: rgba(150, 230, 255, 0.18);
+      --aura2: rgba(190, 140, 255, 0.14);
+      --ember: rgba(255, 195, 120, 0.12);
+
+      --glow: 0 0 18px rgba(150, 230, 255, 0.26);
+      --glow2: 0 0 44px rgba(150, 230, 255, 0.30);
+      --glowRune: 0 0 22px rgba(190, 140, 255, 0.28);
 
       --radius: 18px;
       --radius-sm: 12px;
@@ -31,29 +37,9 @@
       --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
 
-      /* Poker-card-ish aspect ratio target */
-      --card-aspect: 1 / 1.42;  /* width / height ~ playing card */
+      --card-aspect: 1 / 1.42;
       --card-min: 250px;
       --gap: 16px;
-    }
-
-    [data-theme="light"]{
-      --bg0:#f7f2e8;
-      --bg1:#efe6d7;
-
-      --panel: rgba(255, 252, 246, 0.90);
-      --panel2: rgba(255, 252, 246, 0.72);
-
-      --ink:#1b1c1f;
-      --ink2: rgba(27,28,31,0.78);
-      --muted: rgba(27,28,31,0.55);
-
-      --border: rgba(27,28,31,0.16);
-      --border2: rgba(86,140,190,0.30);
-
-      --shadow: 0 18px 46px rgba(20, 12, 3, 0.16);
-      --glow: 0 0 18px rgba(86,140,190,0.16);
-      --glow2: 0 0 34px rgba(86,140,190,0.22);
     }
 
     *{ box-sizing:border-box; }
@@ -63,152 +49,86 @@
       color:var(--ink);
       font-family: var(--serif);
       background:
-        radial-gradient(1200px 800px at 15% 10%, rgba(155,208,255,0.14), transparent 60%),
-        radial-gradient(900px 700px at 85% 30%, rgba(255,210,150,0.10), transparent 62%),
-        radial-gradient(700px 600px at 45% 90%, rgba(155,208,255,0.08), transparent 62%),
+        radial-gradient(1200px 900px at 12% 10%, var(--aura), transparent 60%),
+        radial-gradient(900px 700px at 88% 25%, var(--ember), transparent 62%),
+        radial-gradient(900px 700px at 55% 95%, var(--aura2), transparent 65%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
-      background-attachment: fixed, fixed, fixed, fixed;
+      background-attachment: fixed;
       overflow-x:hidden;
     }
 
-    /* Seamless texture overlays */
-    .page::before{
+    .veil::before{
       content:"";
       position:fixed;
       inset:0;
       pointer-events:none;
-      opacity:0.55;
+      opacity:0.45;
       mix-blend-mode: overlay;
       background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-      background-size: 220px 220px;
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.20'/%3E%3C/svg%3E");
     }
-    .page::after{
-      content:"";
-      position:fixed;
-      inset:-30px;
-      pointer-events:none;
-      opacity:0.30;
-      mix-blend-mode: screen;
-      background:
-        repeating-conic-gradient(from 0deg at 20% 30%,
-          rgba(155,208,255,0.05) 0 8deg,
-          transparent 8deg 18deg),
-        repeating-conic-gradient(from 0deg at 70% 60%,
-          rgba(155,208,255,0.04) 0 10deg,
-          transparent 10deg 22deg);
-      filter: blur(0.3px);
-    }
-
-    a{ color:inherit; text-decoration:none; }
 
     .wrap{
       width:min(1240px, 94%);
       margin: 18px auto 34px;
+      position:relative;
+      z-index: 1;
     }
 
-    .panel{
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent 32%), var(--panel);
+    header{
+      background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      overflow:hidden;
-    }
-
-    /* ========= Header ========= */
-    header.panel{ position:relative; }
-    header .inner{
-      padding: 22px 22px 18px;
-      display:grid;
-      gap: 10px;
+      padding: 22px;
       text-align:center;
-      position:relative;
     }
-    header .inner::after{
-      content:"";
-      position:absolute;
-      inset:-60px;
-      pointer-events:none;
-      background:
-        radial-gradient(520px 260px at 20% 35%, rgba(155,208,255,0.16), transparent 60%),
-        radial-gradient(520px 260px at 80% 65%, rgba(255,210,150,0.12), transparent 60%);
-      opacity:0.9;
-      animation:pulse 6s ease-in-out infinite;
-    }
-    header .inner > *{ position:relative; }
 
-    h1{ margin:0; font-size:32px; letter-spacing:0.3px; }
+    h1{
+      margin:0;
+      font-size:32px;
+      letter-spacing:0.3px;
+      text-shadow: var(--glow2);
+    }
+
     .quote{
-      margin: 0 auto;
+      margin: 10px auto 0;
       font-family: var(--sans);
       font-size: 14px;
       color: var(--ink2);
-      max-width: 86ch;
+      max-width: 80ch;
       padding: 10px 12px;
       border-radius: var(--radius-sm);
-      border: 1px dashed rgba(234,230,220,0.22);
+      border: 1px dashed rgba(150,230,255,0.26);
       background: var(--panel2);
+      box-shadow: var(--glowRune);
     }
 
     .intro{
-      margin: 16px 2px 18px;
+      margin: 18px 0;
       font-family: var(--sans);
       color: var(--ink2);
       font-size: 14px;
-      line-height: 1.55;
-      max-width: 92ch;
     }
 
-    /* ========= Cards grid ========= */
     .grid{
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
       gap: var(--gap);
-      align-items: stretch;
     }
 
-    /* Card wrapper */
     .card{
-      perspective: 1200px;
       position:relative;
-
-      /* Poker-card aspect */
       aspect-ratio: var(--card-aspect);
-      min-height: 340px; /* fallback if aspect-ratio unsupported */
+      perspective: 1200px;
+      cursor:pointer;
     }
 
-    /* Hover "flip" hint */
-    .flipHint{
-      position:absolute;
-      right: 12px;
-      bottom: 12px;
-      font-family: var(--sans);
-      font-size: 12px;
-      color: var(--muted);
-      opacity:0;
-      transform: translateY(4px);
-      transition: opacity 160ms ease, transform 160ms ease;
-      pointer-events:none;
-      user-select:none;
-      z-index: 5;
-    }
-    .card:hover .flipHint{
-      opacity:1;
-      transform: translateY(0);
-    }
-
-    /* Inner 3D object MUST be absolutely positioned so it has height */
     .cardInner{
       position:absolute;
       inset:0;
-      width:100%;
-      height:100%;
       transform-style: preserve-3d;
-      transition: transform 520ms cubic-bezier(.2,.8,.2,1);
-      border-radius: var(--radius);
+      transition: transform 0.6s ease;
     }
 
     .card.is-flipped .cardInner{
@@ -218,611 +138,156 @@
     .face{
       position:absolute;
       inset:0;
+      backface-visibility:hidden;
       border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.06), transparent 40%),
-        rgba(0,0,0,0.18);
-      box-shadow: 0 14px 34px rgba(0,0,0,0.22);
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      overflow:hidden;
-      display:grid;
+      border:1px solid var(--border);
+      background: var(--panel);
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      box-shadow: var(--shadow);
     }
 
-    /* decorative glow */
-    .face::before{
-      content:"";
-      position:absolute;
-      inset:-60px;
-      pointer-events:none;
-      background:
-        radial-gradient(260px 180px at 18% 22%, rgba(155,208,255,0.16), transparent 62%),
-        radial-gradient(240px 160px at 82% 78%, rgba(255,210,150,0.10), transparent 64%);
-      opacity:0.9;
-      transition: opacity 200ms ease;
-    }
-
-    .card:hover .face{
-      border-color: rgba(155,208,255,0.28);
-      box-shadow: var(--glow2), 0 14px 34px rgba(0,0,0,0.22);
-    }
-
-    .front{ transform: rotateY(0deg); }
-    .back{ transform: rotateY(180deg); }
-
-    .content{
-      position:relative;
-      padding: 16px;
-      display:grid;
-      gap: 10px;
-      align-content:start;
+    .back{
+      transform: rotateY(180deg);
     }
 
     .topRow{
       display:flex;
-      align-items:center;
       justify-content:space-between;
-      gap: 10px;
+      align-items:center;
     }
 
     .icon{
-      width: 48px;
-      height: 48px;
+      width:48px;
+      height:48px;
+      border-radius:14px;
+      border:1px solid var(--border2);
       display:grid;
       place-items:center;
-      border-radius: 14px;
-      border: 1px solid var(--border2);
-      background:
-        linear-gradient(180deg, rgba(155,208,255,0.14), transparent 65%),
-        rgba(0,0,0,0.18);
-      box-shadow: 0 12px 26px rgba(0,0,0,0.20);
-      font-size: 20px;
-      flex: 0 0 auto;
+      background: rgba(0,0,0,0.25);
+      box-shadow: var(--glow);
+    }
+
+    .icon img{
+      width:72%;
+      height:72%;
+      object-fit:contain;
+      filter: drop-shadow(0 0 10px rgba(150,230,255,0.35));
     }
 
     .status{
       font-family: var(--sans);
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,0.16);
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .status.ready{
-      border-color: rgba(155,208,255,0.38);
-      color: var(--ink2);
-      box-shadow: var(--glow);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border2);
+      color:var(--ink2);
     }
 
     h3{
-      margin: 0;
+      margin:12px 0 4px;
       font-family: var(--sans);
-      font-size: 16px;
-      letter-spacing: 0.2px;
+      font-size:16px;
     }
 
     p{
-      margin: 0;
+      margin:0;
       font-family: var(--sans);
-      font-size: 13px;
-      color: var(--ink2);
-      line-height: 1.45;
+      font-size:13px;
+      color:var(--ink2);
     }
 
-    .ctaRow{
-      margin-top: auto; /* push buttons toward bottom for poker-card feel */
-      display:flex;
-      gap: 10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,0.14);
+    .flipHint{
+      position:absolute;
+      bottom:12px;
+      right:12px;
       font-family: var(--sans);
-      font-size: 13px;
-      width: fit-content;
-      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+      font-size:12px;
+      opacity:0;
+      transition:opacity 0.2s ease;
     }
 
-    .card:hover .pill{
-      transform: translateY(-1px);
-      border-color: rgba(155,208,255,0.35);
-      box-shadow: var(--glow);
-    }
-
-    /* Back face */
-    .descTitle{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-    }
-    .small{
-      color: var(--muted);
-      font-size: 12px;
-      font-family: var(--sans);
-    }
-
-    /* Optional slight lift on hover */
-    .card{
-      transition: transform 200ms ease;
-    }
-    .card:hover{
-      transform: translateY(-3px);
-    }
-
-    /* ========= Footer + Dark mode toggle ========= */
-    footer{
-      margin-top: 20px;
-      display:flex;
-      justify-content:space-between;
-      gap: 12px;
-      flex-wrap:wrap;
-      font-family: var(--sans);
-      font-size: 12px;
-      color: var(--muted);
-      padding: 0 2px;
+    .card:hover .flipHint{
+      opacity:1;
     }
 
     .themeToggle{
-      position: fixed;
-      right: 16px;
-      bottom: 16px;
-      z-index: 30;
-      border-radius: 999px;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent 35%), rgba(0,0,0,0.18);
-      color: var(--ink);
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--border2);
+      background: var(--panel);
+      color:var(--ink);
       font-family: var(--sans);
-      font-size: 13px;
-      cursor: pointer;
+      cursor:pointer;
       box-shadow: var(--shadow);
-      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
-    }
-    .themeToggle:hover{
-      transform: translateY(-1px);
-      border-color: rgba(155,208,255,0.38);
-      box-shadow: var(--glow2), var(--shadow);
-    }
-
-    @keyframes pulse{
-      0%,100%{ opacity:0.60; }
-      50%{ opacity:1; }
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      header .inner::after{ animation:none !important; }
-      .cardInner{ transition:none !important; }
-      .card, .pill, .themeToggle{ transition:none !important; }
     }
   </style>
 </head>
 
 <body data-theme="dark">
-  <div class="page" aria-hidden="true"></div>
+<div class="veil"></div>
 
-  <div class="wrap">
-    <header class="panel">
-      <div class="inner">
-        <h1>The Lantern &amp; Leylines</h1>
-        <p class="quote" id="quoteLine">Speak softly. Cast precisely. Take notes.</p>
-      </div>
-    </header>
+<div class="wrap">
+  <header>
+    <h1>The Lantern & Leylines</h1>
+    <div class="quote" id="quoteLine"></div>
+  </header>
 
-    <p class="intro">
-      Click a card to flip it and read what it does. Only the Dice Roller is live for now — everything else is marked
-      <strong>Coming soon</strong>.
-    </p>
+  <p class="intro">Click a card to flip it. Only the Dice Roller is live.</p>
 
-    <section class="grid" aria-label="Tools">
-      <!-- 1) Dice Roller (LIVE) -->
-      <div class="card" data-live="true">
-        <div class="cardInner">
-          <div class="face front">
-            <div class="content">
-              <div class="topRow">
-                <div class="icon" aria-hidden="true">🎲</div>
-                <div class="status ready">Ready</div>
-              </div>
-              <div>
-                <h3>Dice Roller</h3>
-                <p>Fast rolls for the table: advantage, modifiers, and clean output.</p>
-              </div>
-              <div class="ctaRow">
-                <!-- stopPropagation so clicking Open doesn't flip -->
-                <a class="pill" href="dice.html" data-action="open">Open tool →</a>
-              </div>
+  <section class="grid">
+    <!-- Dice Roller -->
+    <div class="card" data-live="true">
+      <div class="cardInner">
+        <div class="face front">
+          <div class="topRow">
+            <div class="icon">
+              <img src="https://i.imgur.com/qMPejCL.png" alt="">
             </div>
+            <div class="status">Ready</div>
           </div>
-
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle">
-                <h3>Dice Roller</h3>
-                <span class="small">Click to flip back</span>
-              </div>
-              <p>
-                A quick roller for d20 checks, damage dice, and repeatable rolls without breaking the flow.
-                Designed for “roll now, narrate immediately.”
-              </p>
-              <div class="ctaRow">
-                <a class="pill" href="dice.html" data-action="open">Open tool →</a>
-              </div>
-            </div>
+          <div>
+            <h3>Dice Roller</h3>
+            <p>Fast rolls for the table.</p>
           </div>
         </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <!-- Everything below: Coming soon -->
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front">
-            <div class="content">
-              <div class="topRow">
-                <div class="icon" aria-hidden="true">⚔️</div>
-                <div class="status">Coming soon</div>
-              </div>
-              <div>
-                <h3>Initiative Tracker</h3>
-                <p>Keep turn order, conditions, and reminders in one place.</p>
-              </div>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Initiative Tracker</h3><span class="small">Click to flip back</span></div>
-              <p>Track turns, statuses, and timed effects—fast editing, quick reorder, and DM-friendly prompts.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
+        <div class="face back">
+          <div>
+            <h3>Dice Roller</h3>
+            <p>Roll d20s, damage dice, and modifiers without breaking flow.</p>
           </div>
         </div>
-        <span class="flipHint">flip</span>
       </div>
+      <span class="flipHint">flip</span>
+    </div>
+  </section>
+</div>
 
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front">
-            <div class="content">
-              <div class="topRow">
-                <div class="icon" aria-hidden="true">📜</div>
-                <div class="status">Coming soon</div>
-              </div>
-              <div>
-                <h3>Character Sheet</h3>
-                <p>Stats, story notes, inventory, and quick-reference actions.</p>
-              </div>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Character Sheet</h3><span class="small">Click to flip back</span></div>
-              <p>A clean sheet with printable views, quick rolls, and sections that stay readable mid-session.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
+<button class="themeToggle" id="themeToggle">🌗 Dark mode</button>
 
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front">
-            <div class="content">
-              <div class="topRow">
-                <div class="icon" aria-hidden="true">🏘️</div>
-                <div class="status">Coming soon</div>
-              </div>
-              <div>
-                <h3>Town Generator</h3>
-                <p>Instant settlements: NPCs, shops, factions, and rumors.</p>
-              </div>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Town Generator</h3><span class="small">Click to flip back</span></div>
-              <p>Generate a town with mood, notable locations, hooks, and complications that fit your campaign tone.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
+<script>
+  const quotes = [
+    "Steel sings loudest when courage keeps the rhythm.",
+    "Magic is a language; mispronounce it at your peril.",
+    "Heroes are made between the roll and the resolve."
+  ];
+  document.getElementById("quoteLine").textContent =
+    quotes[Math.floor(Math.random() * quotes.length)];
 
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front">
-            <div class="content">
-              <div class="topRow">
-                <div class="icon" aria-hidden="true">🧙</div>
-                <div class="status">Coming soon</div>
-              </div>
-              <div>
-                <h3>Character Generator</h3>
-                <p>Build a PC/NPC seed: traits, goals, quirks, and secrets.</p>
-              </div>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Character Generator</h3><span class="small">Click to flip back</span></div>
-              <p>Quick personalities and backstory hooks—enough to roleplay immediately, with room to expand later.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
+  document.querySelectorAll(".card").forEach(card=>{
+    card.addEventListener("click",()=>card.classList.toggle("is-flipped"));
+  });
 
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front">
-            <div class="content">
-              <div class="topRow">
-                <div class="icon" aria-hidden="true">🛒</div>
-                <div class="status">Coming soon</div>
-              </div>
-              <div>
-                <h3>Shop Generator</h3>
-                <p>Merchants, inventories, pricing flavor, and oddities.</p>
-              </div>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
-          <div class="face back">
-            <div class="content">
-              <div class="descTitle"><h3>Shop Generator</h3><span class="small">Click to flip back</span></div>
-              <p>Generate a shop’s vibe, proprietor, stock list, and “special item” the party will absolutely want.</p>
-              <div class="ctaRow"><span class="pill">Coming soon</span></div>
-            </div>
-          </div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <!-- +10 more (coming soon) -->
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front"><div class="content">
-            <div class="topRow"><div class="icon">👤</div><div class="status">Coming soon</div></div>
-            <div><h3>NPC Generator</h3><p>Names, mannerisms, bonds, and immediate roleplay hooks.</p></div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-          <div class="face back"><div class="content">
-            <div class="descTitle"><h3>NPC Generator</h3><span class="small">Click to flip back</span></div>
-            <p>Instant NPCs with motives and voice cues—perfect for when players talk to “the random guard.”</p>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front"><div class="content">
-            <div class="topRow"><div class="icon">🏰</div><div class="status">Coming soon</div></div>
-            <div><h3>Encounter Builder</h3><p>Quick fight setups: difficulty, themes, and twists.</p></div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-          <div class="face back"><div class="content">
-            <div class="descTitle"><h3>Encounter Builder</h3><span class="small">Click to flip back</span></div>
-            <p>Generate encounters by environment and threat level—plus a complication to keep it memorable.</p>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front"><div class="content">
-            <div class="topRow"><div class="icon">💰</div><div class="status">Coming soon</div></div>
-            <div><h3>Loot Generator</h3><p>Treasure parcels, trinkets, and “this seems cursed” items.</p></div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-          <div class="face back"><div class="content">
-            <div class="descTitle"><h3>Loot Generator</h3><span class="small">Click to flip back</span></div>
-            <p>Generate gold, gems, mundane loot, and flavorful magic items with story-forward properties.</p>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front"><div class="content">
-            <div class="topRow"><div class="icon">📖</div><div class="status">Coming soon</div></div>
-            <div><h3>Spellbook Tracker</h3><p>Prepared spells, slots, notes, and quick casting references.</p></div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-          <div class="face back"><div class="content">
-            <div class="descTitle"><h3>Spellbook Tracker</h3><span class="small">Click to flip back</span></div>
-            <p>Organize spells by level and situation—track prepared lists and remaining slots cleanly.</p>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front"><div class="content">
-            <div class="topRow"><div class="icon">🧭</div><div class="status">Coming soon</div></div>
-            <div><h3>Quest Hook Generator</h3><p>Hooks, patrons, stakes, and “why now?” urgency.</p></div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-          <div class="face back"><div class="content">
-            <div class="descTitle"><h3>Quest Hook Generator</h3><span class="small">Click to flip back</span></div>
-            <p>Generate a quest premise with a twist, a rival, and a consequence if the party ignores it.</p>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front"><div class="content">
-            <div class="topRow"><div class="icon">🍺</div><div class="status">Coming soon</div></div>
-            <div><h3>Tavern Generator</h3><p>Menus, patrons, rumors, and the one table you shouldn’t sit at.</p></div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-          <div class="face back"><div class="content">
-            <div class="descTitle"><h3>Tavern Generator</h3><span class="small">Click to flip back</span></div>
-            <p>Instant taverns with signature drinks, staff, local gossip, and a problem brewing in the back room.</p>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front"><div class="content">
-            <div class="topRow"><div class="icon">🗺️</div><div class="status">Coming soon</div></div>
-            <div><h3>Map Generator</h3><p>Region seeds, points of interest, and travel complications.</p></div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-          <div class="face back"><div class="content">
-            <div class="descTitle"><h3>Map Generator</h3><span class="small">Click to flip back</span></div>
-            <p>Generate a quick region layout with landmarks, routes, and a few “here be trouble” zones.</p>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front"><div class="content">
-            <div class="topRow"><div class="icon">🧾</div><div class="status">Coming soon</div></div>
-            <div><h3>Random Table Roller</h3><p>Roll on custom tables: weather, rumors, travel, loot, and more.</p></div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-          <div class="face back"><div class="content">
-            <div class="descTitle"><h3>Random Table Roller</h3><span class="small">Click to flip back</span></div>
-            <p>Create, save, and roll on tables during play—great for improvising without scrambling.</p>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front"><div class="content">
-            <div class="topRow"><div class="icon">🩸</div><div class="status">Coming soon</div></div>
-            <div><h3>Condition Cards</h3><p>Quick-reference conditions with reminders and expiry timers.</p></div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-          <div class="face back"><div class="content">
-            <div class="descTitle"><h3>Condition Cards</h3><span class="small">Click to flip back</span></div>
-            <p>Tap to apply conditions, track durations, and keep rules summaries visible for the whole table.</p>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-
-      <div class="card" data-live="false">
-        <div class="cardInner">
-          <div class="face front"><div class="content">
-            <div class="topRow"><div class="icon">🧿</div><div class="status">Coming soon</div></div>
-            <div><h3>Name Generator</h3><p>Culture-flavored names for people, places, ships, and swords.</p></div>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-          <div class="face back"><div class="content">
-            <div class="descTitle"><h3>Name Generator</h3><span class="small">Click to flip back</span></div>
-            <p>Generate consistent naming styles by region or ancestry—plus nicknames and titles.</p>
-            <div class="ctaRow"><span class="pill">Coming soon</span></div>
-          </div></div>
-        </div>
-        <span class="flipHint">flip</span>
-      </div>
-    </section>
-
-    <footer>
-      <span><strong>Unofficial fan tool.</strong> Not affiliated with Wizards of the Coast.</span>
-      <span>Version 0.3</span>
-    </footer>
-  </div>
-
-  <button class="themeToggle" id="themeToggle" type="button" aria-pressed="true">🌗 Dark mode</button>
-
-  <script>
-    // Random line under title (no label; just the text)
-    const quoteLine = document.getElementById("quoteLine");
-    const quotes = [
-      "Steel sings loudest when courage keeps the rhythm.",
-      "A rune ignored is a lesson repeated.",
-      "Heroes are made between the roll and the resolve.",
-      "Never trust a smiling bard… unless the snacks are good.",
-      "Speak softly. Cast precisely. Take notes.",
-      "The map is honest. The road is not.",
-      "If it has teeth, it has a plan.",
-      "Count torches like promises: both run out too soon."
-    ];
-    quoteLine.textContent = quotes[Math.floor(Math.random() * quotes.length)];
-
-    // Theme toggle fixed bottom-right
-    const themeToggle = document.getElementById("themeToggle");
-    const saved = localStorage.getItem("dndTheme");
-    if (saved === "light" || saved === "dark") document.body.setAttribute("data-theme", saved);
-
-    function syncThemeButton(){
-      const dark = document.body.getAttribute("data-theme") !== "light";
-      themeToggle.setAttribute("aria-pressed", String(dark));
-      themeToggle.textContent = dark ? "🌗 Dark mode" : "🌗 Light mode";
-    }
-    syncThemeButton();
-
-    themeToggle.addEventListener("click", () => {
-      const current = document.body.getAttribute("data-theme");
-      const next = (current === "light") ? "dark" : "light";
-      document.body.setAttribute("data-theme", next);
-      localStorage.setItem("dndTheme", next);
-      syncThemeButton();
-    });
-
-    // FIX: flip cards reliably.
-    // - We attach click handler directly to each .card
-    // - We prevent flipping only when clicking a link with data-action="open"
-    document.querySelectorAll(".card").forEach(card => {
-      const openLinks = card.querySelectorAll('a[data-action="open"]');
-      openLinks.forEach(a => a.addEventListener("click", (e) => e.stopPropagation()));
-
-      card.addEventListener("click", () => {
-        card.classList.toggle("is-flipped");
-      });
-
-      // keyboard support
-      card.setAttribute("tabindex", "0");
-      card.setAttribute("role", "button");
-      card.setAttribute("aria-label", "Flip card");
-      card.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          card.classList.toggle("is-flipped");
-        }
-      });
-    });
-  </script>
+  const toggle = document.getElementById("themeToggle");
+  toggle.onclick = ()=>{
+    document.body.dataset.theme =
+      document.body.dataset.theme === "light" ? "dark" : "light";
+  };
+</script>
 </body>
 </html>
